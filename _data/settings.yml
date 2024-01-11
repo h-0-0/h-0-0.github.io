@@ -31,8 +31,8 @@ pagination:
   next_page: 'Newer'
   previous_page: 'Older'
 
-sharing_button_prompt: '📡'
+sharing_button_prompt: 'Wanna share? 📡:'
 
-related_posts: 'You may also enjoy...'
+# related_posts: 'Further Reading ... Not Really'
 
 post_date_prefix: 'Written on'
