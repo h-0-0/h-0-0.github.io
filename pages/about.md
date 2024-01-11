@@ -8,4 +8,6 @@ Hi, my names Henry. Im a PhD student at the Univeristy of Bristol at the Compass
 
 Currently researching in the area of Continual Learning. 
 
-
+📧📧📧📧📧📧
+Shoot me an email at jd18380(at)bristol.ac.uk
+📧📧📧📧📧📧
