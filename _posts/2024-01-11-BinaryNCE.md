@@ -23,9 +23,9 @@ I am aiming to keep these blogs evolving, so if you have any feedback on this bl
 # Binary NCE
 Let's dive straight in! NCE is an estimation principle for parameterized statistical models. That means given a parameterized statistical model we would like to infer and some observed data we can use NCE to estimate the parameters of the model. We can use Binary NCE is we have a problem with the following setup: 
 <span style="color:green;">
-* <span style="color:green;"> $p_{d}(\cdot)$, Some probability distribution of data we want to estimate
-* <span style="color:green;"> $p_{m}(\cdot;\alpha)$, A probability model parameterized by $\alpha$
-* <span style="color:green;"> Assume $\exists \alpha^{*} \: \text{such that} \: p_{d}(\cdot) = p_{m}(\cdot; \alpha^{*})$ </span>
+* <span style="color:green;"> $$p_{d}(\cdot)$$, Some probability distribution of data we want to estimate
+* <span style="color:green;"> $$p_{m}(\cdot;\alpha)$$, A probability model parameterized by $$\alpha$$
+* <span style="color:green;"> Assume $$\exists \alpha^{*} \: \text{such that} \: p_{d}(\cdot) = p_{m}(\cdot; \alpha^{*})$$ </span>
 
 Throughout I'm going to put assumptions in green so that they are easily identifiable! Assumptions are important and can often be hard to spot in papers, so I will try to make them clear.
 
@@ -39,7 +39,7 @@ $$
 p_{m}(\cdot;\alpha)=\frac{p_{m}^{0}(\cdot; \alpha)}{Z(\alpha)} & \text{where,} \: Z(\alpha) = \int p_{m}^{0}(u; \alpha) du
 \end{array}
 $$
-And computing $Z(\alpha)$ is often intractable (or at least expensive) if the analytical solution is not available and/or if the possible values that the input can take are large.
+And computing $$Z(\alpha)$$ is often intractable (or at least expensive) if the analytical solution is not available and/or if the possible values that the input can take are large.
 
 In these cases we can't use the MLE 😞.
 
@@ -59,34 +59,33 @@ $$
 </td>
 <td style="padding: 10px;">
 
-$\theta = \{\alpha, c \}$,
-
-$c$ an estimate of $-\log Z(\alpha)$.
+$$\text{Where, } \\ \theta = \{\alpha, c \}, \\ \text{c an estimate of} -\log Z(\alpha)$$
 
 </td>
 </tr>
 </table>
 
-What we'll do is just add ‘c’ as a parameter of our model and estimate it along with all our other parameters (and will now use $\theta$ to refer to our new set of parameters), making the model self-normalising. 
+What we'll do is just add ‘c’ as a parameter of our model and estimate it along with all our other parameters (and will now use $$\theta$$ to refer to our new set of parameters), making the model self-normalising. 
 
 We will talk more about assumptions needed for this to work later (in ranking NCE).
 
-So <span style="color:green;"> assuming that we can infer the normalizing constant</span> we no longer need to compute $Z(\alpha)$ anymore!
+So <span style="color:green;"> assuming that we can infer the normalizing constant</span> we no longer need to compute $$Z(\alpha)$$ anymore!
 
 ## Side-stepping the problem (where the noise comes in)
-Fitting $p_{m}(\cdot ; \theta)$ directly can be difficult if our model and data is complex and high-dimensional. Let’s not do this and instead try maximise a statistic that is easier to compute but achieves the same thing. Let:
-* $X=(x_{1}, ..., x_{T})$, be the observed data, distributed $p_{d}(\cdot)$.
-* $X' = (x'_{1},...,x'_{T})$, be artificial noise, with distribution $p_{n}(\cdot)$.
+Fitting $$p_{m}(\cdot ; \theta)$$ directly can be difficult if our model and data is complex and high-dimensional. Let’s not do this and instead try maximise a statistic that is easier to compute but achieves the same thing. Let:
+* $$X=(x_{1}, ..., x_{T})$$, be the observed data, distributed $$p_{d}(\cdot)$$.
+* $$X' = (x'_{1},...,x'_{T})$$, be artificial noise, with distribution $$p_{n}(\cdot)$$.
 
-And let’s turn our problem into a binary classification problem of guessing whether a sample comes from $p_{d}(\cdot)$ or￼$p_{n}(\cdot)$.
+And let’s turn our problem into a binary classification problem of guessing whether a sample comes from $$p_{d}(\cdot)$$ or￼$$p_{n}(\cdot)$$.
 
-We can assess how likely some sample, $u$, is to have come from our estimate of the pdf, $p_{m}(\cdot;\alpha)$, compared to from our noise distribution, $p_{n}(\cdot)$, by evaluating the following density ratio:
+We can assess how likely some sample, $$u$$, is to have come from our estimate of the pdf, $$p_{m}(\cdot;\alpha)$$, compared to from our noise distribution, $$p_{n}(\cdot)$$, by evaluating the following density ratio:
 $$
 \frac{p_{m}(u;\alpha)}{p_{n}(u)}
 $$
-Notice that if $u$ is more likely to have come from $p_{m}(\cdot;\alpha)$ than $p_{n}(\cdot)$ then this ratio will be greater than 1 and vice versa.
+Notice that if $$u$$ is more likely to have come from $$p_{m}(\cdot;\alpha)$$ than $$p_{n}(\cdot)$$ then this ratio will be greater than 1 and vice versa.
 
-Taking the $\log$ we can rewrite this:
+Taking the $$\log$$ we can rewrite this:
+<div style="text-align: left">
 $$
 \begin{aligned}
 & \log \left(\frac{p_{m}(u;\alpha)}{p_{n}(u)} \right)  \\
@@ -96,51 +95,64 @@ $$
 & = \log p_{m}(u;\theta) - \log p_{n}(u)
 \end{aligned}
 $$
-Now it's in terms of our probability model parameterized by $\theta$ and is in an easily interpretable and computable form (just the difference between two $\log$ probabilities which we can both easily calculate, assuming an analytical expression for the pdf's).
+</div>
+
+Now it's in terms of our probability model parameterized by $$\theta$$ and is in an easily interpretable and computable form (just the difference between two $$\log$$ probabilities which we can both easily calculate, assuming an analytical expression for the pdf's).
 
 Let's define a function to represent the log density ratio we just derived: 
+<div style="text-align: left">
 $$
 G(u;\theta) := \log p_{m}(u;\theta) - \log p_{n}(u)
 $$
-This represents how likely $u$ is to have come from either the ‘real’, $p_{d}(\cdot)$, or noisy, $p_{n}(\cdot)$, distributions. We would like to represent this as a probability (between 0 and 1) so we put it through the logistic function:
+</div>
+
+This represents how likely $$u$$ is to have come from either the ‘real’, $$p_{d}(\cdot)$$, or noisy, $$p_{n}(\cdot)$$, distributions. We would like to represent this as a probability (between 0 and 1) so we put it through the logistic function:
+<div style="text-align: left">
 $$
 \sigma(G(u;\theta)) = \frac{1}{1+ \exp[-G(u;\theta)]}
 $$
-Now we have a probability that $u$ comes from the ‘real’ distribution, we need some way of measuring how well our classifier is doing so that we can optimize the parameters.
+</div>
+Now we have a probability that $$u$$ comes from the ‘real’ distribution, we need some way of measuring how well our classifier is doing so that we can optimize the parameters.
 
 We will use the following objective function:
+<div style="text-align: left">
 $$
 J_{T}(\theta) = \frac{1}{2T} \sum_{t} \log [ \sigma(G(x_{t}; \theta)) ] + \log [ 1- \sigma(G(x'_{t};\theta)) ]
 $$
-This objective function is similar (up to a factor of $1/2T$) to the objective function for a supervised binary classification problem with cross entropy loss where you are trying to predict a label that’s 1 if the sample comes from the ‘real’ distribution and otherwise is 0. The fact that this objective is so similar to the cross entropy gives some understanding for why the above objective function works at classifying a sample as 'real' or noise. Check out section 2.2 in ['Noise-contrastive estimation: A new estimation principle for unnormalized statistical models'](http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf) for a more full explanation. In a later blog post I'll show mathematically how such an objective function actually leads to us estimating the density ratio we discussed above.
+</div>
+This objective function is similar (up to a factor of $$1/2T$$) to the objective function for a supervised binary classification problem with cross entropy loss where you are trying to predict a label that’s 1 if the sample comes from the ‘real’ distribution and otherwise is 0. The fact that this objective is so similar to the cross entropy gives some understanding for why the above objective function works at classifying a sample as 'real' or noise. Check out section 2.2 in ['Noise-contrastive estimation: A new estimation principle for unnormalized statistical models'](http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf) for a more full explanation. In a later blog post I'll show mathematically how such an objective function actually leads to us estimating the density ratio we discussed above.
 
 ## Ancillary objective functions for theoretical analysis
 We now will quickly define some ancillary objective functions which I will reference in our assumptions and theorems in the next few sections. 
 
-The following objective function is what $J_{T}(\theta)$ is shown to converge to in probability in [Theorem 1.1](#T1.1)(by the weak law of large numbers):
+The following objective function is what $$J_{T}(\theta)$$ is shown to converge to in probability in [Theorem 1.1](#T1.1)(by the weak law of large numbers):
+<div style="text-align: left">
 $$
 J(\theta) = \frac{1}{2} \mathbb{E} [ \log [ \sigma(G(x_{t}; \theta)) ] + \log [ 1- \sigma(G(x'_{t};\theta)) ] ]
 $$
+</div>
 We introduce it here to make our theorems more readable in the next sections.
 
-We denote by $\tilde{J}$ the objective $J$ above seen as a function of $f(\cdot) = \log p_{m}(\cdot ; \theta)$:
+We denote by $$\tilde{J}$$ the objective $$J$$ above seen as a function of $$f(\cdot) = \log p_{m}(\cdot ; \theta)$$:
+<div style="text-align: left">
 $$
 \tilde{J}(f) = \frac{1}{2} \mathbb{E} 
 \log[ \sigma(f(x) - \log p_{n}(x)) ] 
 +
 \log[ 1 - \sigma(f(x') - \log p_{n}(x')) ]
 $$
+</div>
 This just makes clear the model we are optimizing with respect to the objective function.
 
 ## Assumptions for our theoretical guarantees
 We now introduce some assumptions that we will need to make in order to prove our theoretical guarantees for NCE. The assumptions and theorems are similar to those we find for MLE and appear in the binary NCE paper ['Noise-contrastive estimation: A new estimation principle for unnormalized statistical models'](http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf).
 
 #### Assumption 1.1 <a id="A1.1"></a>
-<span style="color:green;"> $p_{n}(\cdot)$ is non-zero whenever $p_{d}(\cdot)$ is non-zero.
+<span style="color:green;"> $$p_{n}(\cdot)$$ is non-zero whenever $$p_{d}(\cdot)$$ is non-zero.
 </span>
 
 #### Assumption 1.2 <a id="A1.2"></a>
-<span style="color:green;"> $\text{sup}_{\theta}| J_{T}(\theta) - J(\theta)| \rightarrow^{P} 0$ 
+<span style="color:green;"> $$\text{sup}_{\theta}| J_{T}(\theta) - J(\theta)| \rightarrow^{P} 0$$ 
 </span>
 
 #### Assumption 1.3 <a id="A1.3"></a>
@@ -148,16 +160,16 @@ We now introduce some assumptions that we will need to make in order to prove ou
 <tr>
 <td style="border-right: 1px solid black; padding: 10px;">
 
-<span style="color:green;"> $\mathcal{I} = \int g(x) g(x)^{T} P(x)p_{d}(x)dx$ </span>
+<span style="color:green;"> $$\mathcal{I} = \int g(x) g(x)^{T} P(x)p_{d}(x)dx$$ </span>
 
 </td>
 <td style="padding: 10px;">
 
-<span style="color:green;">Where:</span> 
+<span style="color:green;">Where,</span> 
 
-<span style="color:green;">$P(x) = \frac{p_{n}(x)}{p_{d}(x)+p_{n}(x)}$,</span>
+<span style="color:green;">$$P(x) = \frac{p_{n}(x)}{p_{d}(x)+p_{n}(x)},$$</span>
 
-<span style="color:green;">$g(x) = \nabla_{\theta} \log p_{m}(x;\theta)|_{\theta^{*}}$</span>
+<span style="color:green;">$$g(x) = \nabla_{\theta} \log p_{m}(x;\theta)|_{\theta^{*}}$$</span>
 
 </td>
 </tr>
@@ -171,33 +183,33 @@ We now introduce some theoretical properties of NCE. The proofs of these propert
 These theorems are similar to those we find for MLE and give us some theoretical guarantees for the NCE method. Let's now dive into what these theorems are, mean and the assumptions they rest on. 
 
 #### Theorem 1.1 - Nonparametric estimation <a id="T1.1"></a>
-If [Assumption 1.1](#A1.1) holds then, $\tilde{J}$ attains a maximum at $f(\cdot) = \log p_{d}(\cdot)$ and there are no other extrema.
+If [Assumption 1.1](#A1.1) holds then, $$\tilde{J}$$ attains a maximum at $$f(\cdot) = \log p_{d}(\cdot)$$ and there are no other extrema.
 
 #### Discussion of Theorem 1.1:
-This theorem shows that the pdf, $p_{d}(\cdot)$, can be found by the maximization of $\tilde{J}$. A key thing to notice is that the maximization is performed without any normalization constraint for $f(\cdot)$. This contrasts heavily with MLE where we must have $\exp(f)$ integrate to 1. We also find that [Assumption 1.1](#A1.1) is pretty easily fulfilled. For example, if $p_{n}(\cdot)$ is a Gaussian with mean 0 and variance $\sigma^{2}$ then $p_{n}(\cdot)$ is non-zero whenever $p_{d}(\cdot)$ is non-zero.
+This theorem shows that the pdf, $$p_{d}(\cdot)$$, can be found by the maximization of $$\tilde{J}$$. A key thing to notice is that the maximization is performed without any normalization constraint for $$f(\cdot)$$. This contrasts heavily with MLE where we must have $$\exp(f)$$ integrate to 1. We also find that [Assumption 1.1](#A1.1) is pretty easily fulfilled. For example, if $$p_{n}(\cdot)$$ is a Gaussian with mean 0 and variance $$\sigma^{2}$$ then $$p_{n}(\cdot)$$ is non-zero whenever $$p_{d}(\cdot)$$ is non-zero.
 
 #### Theorem 1.2 - Consistency <a id="T1.2"></a>
-If [Assumption 1.1](#A1.1), [Assumption 1.2](#A1.2), [Assumption 1.3](#A1.3) hold then, $\hat{\theta}_{T} \rightarrow^{P} \theta^{*}$. 
+If [Assumption 1.1](#A1.1), [Assumption 1.2](#A1.2), [Assumption 1.3](#A1.3) hold then, $$\hat{\theta}_{T} \rightarrow^{P} \theta^{*}$$. 
 
 #### Discussion of Theorem 1.2:
-This theorem tells us that $\hat{\theta}_{T}$ (value of $\theta$ that globally maximizes $J_{T}$) converges to $\theta^{*}$ (the optimal value for $\theta$), leading to a correct estimate for $p_{d}(\cdot)$ as sample size $T$ increases. 
+This theorem tells us that $$\hat{\theta}_{T}$$ (value of $$\theta$$ that globally maximizes $$J_{T}$$) converges to $$\theta^{*}$$ (the optimal value for $$\theta$$), leading to a correct estimate for $$p_{d}(\cdot)$$ as sample size $$T$$ increases. 
 
-This means it tends in probability to both a correct estimate of the un-normalized pdf, $p_{m}^{0}(\cdot ; \alpha)$, and the normalization constant, c. This is impossible when using the maximum likelihood!
+This means it tends in probability to both a correct estimate of the un-normalized pdf, $$p_{m}^{0}(\cdot ; \alpha)$$, and the normalization constant, c. This is impossible when using the maximum likelihood!
 
-Again [Assumption 1.1](#A1.1) is easily fulfilled. [Assumption 1.2](#A1.2) and [Assumption 1.3](#A1.3) have similar counterparts in MLE. [Assumption 1.2](#A1.2) means we need $J_{T}$￼to converge uniformly in probability to $J$. [Assumption 1.3](#A1.3) means we need the objective landscape of $J_{T}$ to be fairly peaky around the value of $\theta^{*}$.
+Again [Assumption 1.1](#A1.1) is easily fulfilled. [Assumption 1.2](#A1.2) and [Assumption 1.3](#A1.3) have similar counterparts in MLE. [Assumption 1.2](#A1.2) means we need $$J_{T}$$￼to converge uniformly in probability to $$J$$. [Assumption 1.3](#A1.3) means we need the objective landscape of $$J_{T}$$ to be fairly peaky around the value of $$\theta^{*}$$.
 
 #### Theorem 1.3 - Asymptotic normality <a id="T1.3"></a>
-$\sqrt{T} (\hat{\theta}_{T} - \theta^{*})$ is asymptomatically normal with mean 0 and covariance matrix $\Sigma$. Where, 
+$$\sqrt{T} (\hat{\theta}_{T} - \theta^{*})$$ is asymptomatically normal with mean 0 and covariance matrix $$\Sigma$$. Where, 
 $$
 \Sigma = \mathcal{I}^{-1} -2\mathcal{I}^{-1} \left[ \int g(x) P(x) p_{d}(x) dx \right] \times \left[\int g(x)^{T} P(x) p_{d}(x) dx \right] \mathcal{I}^{-1}
 $$
 
 #### Discussion of Theorem 1.3:
 This theorem describes the distribution of the estimation error as our sample size tends larger
-It says that the distribution is $\mathcal{N}(0,\Sigma)$, which means the NCE is an unbiased estimator. 
+It says that the distribution is $$\mathcal{N}(0,\Sigma)$$, which means the NCE is an unbiased estimator. 
 
 #### Corollary 1.1 - Asymptotic efficiency <a id="C1.1"></a>
-For large sample sizes $T$, the mean squared error $E|| \hat{\theta}_{T} -\theta^{*} ||^{2}$ behaves like $tr(\Sigma)/T$. 
+For large sample sizes $$T$$, the mean squared error $$E|| \hat{\theta}_{T} -\theta^{*} ||^{2}$$ behaves like $$tr(\Sigma)/T$$. 
 
 #### Discussion of Corollary 1.1:
 This corollary says that the mean squared error starts to resemble the sum of asymptotic variance of all the parameters divided by the number of samples.
@@ -205,11 +217,11 @@ This corollary says that the mean squared error starts to resemble the sum of as
 ## Choosing the noise distribution
 Ideally we want a noise distribution that:
 * Is easy to sample from.
-* Allows for an analytical expression for the log pdf (so we can evaluate $J_{T}(\theta)$ without issues).
-* Leads to a small MSE, $\mathbb{E}|| \hat{\theta}_{T} -\theta^{*} ||^{2}$.
+* Allows for an analytical expression for the log pdf (so we can evaluate $$J_{T}(\theta)$$ without issues).
+* Leads to a small MSE, $$\mathbb{E} \| \hat{\theta}_{T} -\theta^{*} \| ^{2}$$.
 
-Intuitively we want $p_{n}(\cdot)$ to be similar to $p_{d}(\cdot)$ otherwise we may not learn the structure of data (a theoretical argument for this is given in the paper ['Noise-contrastive estimation: A new estimation principle for unnormalized statistical models'](http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf)).
-One method for choosing the noise distribution is to first estimate a preliminary model for the data and then use that preliminary model as your noise distribution, $p_{n}(\cdot)$.
+Intuitively we want $$p_{n}(\cdot)$$ to be similar to $$p_{d}(\cdot)$$ otherwise we may not learn the structure of data (a theoretical argument for this is given in the paper ['Noise-contrastive estimation: A new estimation principle for unnormalized statistical models'](http://proceedings.mlr.press/v9/gutmann10a/gutmann10a.pdf)).
+One method for choosing the noise distribution is to first estimate a preliminary model for the data and then use that preliminary model as your noise distribution, $$p_{n}(\cdot)$$.
 
 ## A quick 🌯-up
 Wrapping up, we can use the NCE to estimate a parametrized statistical model in situations where we can’t use the MLE. The MLE is great as it has been extensively used and has very nice theoretical properties. But in this blog-post we show that in fact the NCE also has similar statistical properties! and that these properties rely on similar assumptions. So this is why Binary NCE is great!
