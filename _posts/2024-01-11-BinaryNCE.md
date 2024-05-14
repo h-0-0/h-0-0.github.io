@@ -21,11 +21,11 @@ This blog post aims to be a well laid out and easy to follow rigorous introducti
 I am aiming to keep these blogs evolving, so if you have any feedback on this blog or others please leave a comment and I'll aim to address it!
 
 # Binary NCE
-Let's dive straight in! NCE is an estimation principle for parameterized statistical models. That means given a parameterized statistical model we would like to infer and some observed data we can use NCE to estimate the parameters of the model. We can use Binary NCE is we have a problem with the following setup: 
+Let's dive straight in! NCE is an estimation principle for parameterized statistical models. That means given a parameterized statistical model and some observed data we can use NCE to estimate the parameters of the model. We can use Binary NCE if we have the following setup: 
 <span style="color:green;">
-* <span style="color:green;"> $$p_{d}(\cdot)$$, Some probability distribution of data we want to estimate
-* <span style="color:green;"> $$p_{m}(\cdot;\alpha)$$, A probability model parameterized by $$\alpha$$
-* <span style="color:green;"> Assume $$\exists \alpha^{*} \: \text{such that} \: p_{d}(\cdot) = p_{m}(\cdot; \alpha^{*})$$ </span>
+* <span style="color:green;"> $$p_{d}(\cdot)$$, Some probability distribution we want to estimate, we also assume we have a collection of samples/observations from this distribution.
+* <span style="color:green;"> $$p_{m}(\cdot;\alpha)$$, A probability model parameterized by $$\alpha$$.
+* <span style="color:green;"> Assume $$\exists \alpha^{*} \: \text{such that} \: p_{d}(\cdot) = p_{m}(\cdot; \alpha^{*})$$. </span>
 
 Throughout I'm going to put assumptions in green so that they are easily identifiable! Assumptions are important and can often be hard to spot in papers, so I will try to make them clear.
 
@@ -39,7 +39,8 @@ $$
 p_{m}(\cdot;\alpha)=\frac{p_{m}^{0}(\cdot; \alpha)}{Z(\alpha)} & \text{where,} \: Z(\alpha) = \int p_{m}^{0}(u; \alpha) du
 \end{array}
 $$
-And computing $$Z(\alpha)$$ is often intractable (or at least expensive) if the analytical solution is not available and/or if the possible values that the input can take are large.
+
+Computing $$Z(\alpha)$$ is often intractable (or at least very expensive to compute) if an analytical solution is not available and/or if the possible values that the input can take are large. This is because we have to integrate (or sum if discrete) over every possible value the input can take for each value of $$\alpha$$ we would like $$Z(\alpha)$$. Images are a great example as the number of possible images is very large even for very low-resolution images. 
 
 In these cases we can't use the MLE 😞.
 
@@ -67,9 +68,11 @@ $$\text{Where, } \\ \theta = \{\alpha, c \}, \\ \text{c an estimate of} -\log Z(
 
 What we'll do is just add ‘c’ as a parameter of our model and estimate it along with all our other parameters (and will now use $$\theta$$ to refer to our new set of parameters), making the model self-normalising. 
 
-We will talk more about assumptions needed for this to work later (in ranking NCE).
+We will talk more about assumptions needed for this to work in the next blog post of this series.
 
 So <span style="color:green;"> assuming that we can infer the normalizing constant</span> we no longer need to compute $$Z(\alpha)$$ anymore!
+
+But ... you may be asking, why can't we take the self-normalizing assumption and then just apply MLE? The reason is that we can make the likelihood arbitrarily large by making c arbitrarily large. So ... let's find out how we can make this work with Binary-NCE!
 
 ## Side-stepping the problem (where the noise comes in)
 Fitting $$p_{m}(\cdot ; \theta)$$ directly can be difficult if our model and data is complex and high-dimensional. Let’s not do this and instead try maximise a statistic that is easier to compute but achieves the same thing. Let:
