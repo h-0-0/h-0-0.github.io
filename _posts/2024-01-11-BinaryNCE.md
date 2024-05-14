@@ -66,7 +66,7 @@ $$\text{Where, } \\ \theta = \{\alpha, c \}, \\ \text{c an estimate of} -\log Z(
 </tr>
 </table>
 
-What we'll do is just add ‘c’ as a parameter of our model and estimate it along with all our other parameters (and will now use $$\theta$$ to refer to our new set of parameters), making the model self-normalising. 
+What we'll do is just add ‘c’ as a parameter of our model and estimate it along with all our other parameters (and will now use $$\theta$$ to refer to our new set of parameters), making the model self-normalising. Pay attention to the fact that we now use $$\theta$$ to denote our model parameters, where $$\theta$$ now includes $$c$$ as a parameter alongside our original model parameters $$\alpha$$.
 
 We will talk more about assumptions needed for this to work in the next blog post of this series.
 
@@ -82,9 +82,14 @@ Fitting $$p_{m}(\cdot ; \theta)$$ directly can be difficult if our model and dat
 And let’s turn our problem into a binary classification problem of guessing whether a sample comes from $$p_{d}(\cdot)$$ or￼$$p_{n}(\cdot)$$.
 
 We can assess how likely some sample, $$u$$, is to have come from our estimate of the pdf, $$p_{m}(\cdot;\alpha)$$, compared to from our noise distribution, $$p_{n}(\cdot)$$, by evaluating the following density ratio:
+<div style="text-align: left">
 $$
-\frac{p_{m}(u;\alpha)}{p_{n}(u)}
+\begin{aligned}
+    \frac{p_{m}(u;\alpha)}{p_{n}(u)}
+\end{aligned}
 $$
+</div>
+
 Notice that if $$u$$ is more likely to have come from $$p_{m}(\cdot;\alpha)$$ than $$p_{n}(\cdot)$$ then this ratio will be greater than 1 and vice versa.
 
 Taking the $$\log$$ we can rewrite this:
