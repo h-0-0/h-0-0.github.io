@@ -232,7 +232,7 @@ Intuitively we want $$p_{n}(\cdot)$$ to be similar to $$p_{d}(\cdot)$$ otherwise
 One method for choosing the noise distribution is to first estimate a preliminary model for the data and then use that preliminary model as your noise distribution, $$p_{n}(\cdot)$$.
 
 ## A quick 🌯-up
-Wrapping up, we can use the NCE to estimate a parametrized statistical model in situations where we can’t use the MLE. The MLE is great as it has been extensively used and has very nice theoretical properties. But in this blog-post we show that in fact the NCE also has similar statistical properties! and that these properties rely on similar assumptions. So this is why Binary NCE is great!
+Wrapping up, we can use NCE to estimate a parameterized statistical model in situations where we can’t use the MLE. The MLE is great as it has been extensively used and has very nice theoretical properties. But in this blog-post we show that in fact the NCE also has similar statistical properties! and that these properties rely on similar assumptions. So this is why Binary NCE is great!
 
 Why is it not so great? We will discuss this more when we get onto talking about Ranking NCE in the next blog-post, but, basically we can’t use it if the number of possible values of the random variable we are trying to model is much larger than the number of free parameters. This comes as a result of our self-normalisation assumption. Finding a good noise distribution is also hard! One of the most difficult properties to fill is finding a good noise distribution that has an analytical expression for the log pdf.
 
