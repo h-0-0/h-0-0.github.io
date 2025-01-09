@@ -10,4 +10,5 @@ permalink: /about
 
 📧 Shoot me an email at: jd18380(at)bristol.ac.uk
 
-👤📄 Get my CV [here](https://h-0-0.github.io/assets/cv.pdf) 
+👤📄 Get my CV 
+<!-- [here](https://h-0-0.github.io/assets/cv.pdf)  -->
